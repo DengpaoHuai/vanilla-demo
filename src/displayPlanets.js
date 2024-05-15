@@ -4,40 +4,47 @@ export async function displayPlanets(element) {
   element.innerHTML = "";
   const pageNumber = sessionStorage.getItem("pageNumber") || 1;
 
-  if (localStorage.getItem("planets-" + pageNumber)) {
-    const planets = JSON.parse(localStorage.getItem("planets-" + pageNumber));
-    planets.forEach((planet, i) => {
-      db.planets.add({
-        id: new Date(),
-        name: planet.name,
-        page: pageNumber,
-      });
-      const p = document.createElement("p");
-      p.innerText = planet.name;
-      element.appendChild(p);
+  db.planets
+    .where("page")
+    .equals(pageNumber)
+    .toArray()
+    .then((planets) => {
+      console.log(planets);
+      if (planets.length) {
+        planets.forEach((planet, i) => {
+          const p = document.createElement("p");
+          p.innerText = planet.name;
+          element.appendChild(p);
+        });
+        return;
+      } else {
+        const response = fetch(
+          "https://swapi.dev/api/planets?page=" + pageNumber
+        )
+          .then((response) => response.json())
+          .then((result) => {
+            result.results.forEach((planet) => {
+              db.planets.add({
+                id: planet.url.split("/").reverse()[1],
+                name: planet.name,
+                page: pageNumber,
+              });
+              const p = document.createElement("p");
+              p.innerText = planet.name;
+              element.appendChild(p);
+            });
+          });
+      }
     });
-    return;
-  }
 
-  const response = await fetch(
-    "https://swapi.dev/api/planets?page=" + pageNumber
-  );
-
-  const result = await response.json();
-  localStorage.setItem("planets-" + pageNumber, JSON.stringify(result.results));
-  result.results.forEach((planet) => {
-    const p = document.createElement("p");
-    p.innerText = planet.name;
-    element.appendChild(p);
-  });
+  return;
 }
 
-export const fetchNextPage = async (button) => {
+export const fetchNextPage = async (button, number) => {
   button.addEventListener("click", async (e) => {
     e.preventDefault();
     let pageNumber = sessionStorage.getItem("pageNumber") || 1;
-    pageNumber++;
-    console.log(pageNumber);
+    pageNumber = Number(pageNumber) + number;
     sessionStorage.setItem("pageNumber", pageNumber);
     displayPlanets(document.getElementById("list"));
   });

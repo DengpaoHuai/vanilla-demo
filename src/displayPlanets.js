@@ -1,4 +1,4 @@
-//import { createData } from "./indexedDB/indexedDB";
+import db from "./indexedDB/indexedDB";
 
 export async function displayPlanets(element) {
   element.innerHTML = "";
@@ -6,7 +6,12 @@ export async function displayPlanets(element) {
 
   if (localStorage.getItem("planets-" + pageNumber)) {
     const planets = JSON.parse(localStorage.getItem("planets-" + pageNumber));
-    planets.forEach((planet) => {
+    planets.forEach((planet, i) => {
+      db.planets.add({
+        id: new Date(),
+        name: planet.name,
+        page: pageNumber,
+      });
       const p = document.createElement("p");
       p.innerText = planet.name;
       element.appendChild(p);

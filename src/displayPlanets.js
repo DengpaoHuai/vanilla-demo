@@ -1,12 +1,39 @@
+//import { createData } from "./indexedDB/indexedDB";
+
 export async function displayPlanets(element) {
-  const response = await fetch("https://swapi.dev/api/planets");
+  element.innerHTML = "";
+  const pageNumber = sessionStorage.getItem("pageNumber") || 1;
+
+  if (localStorage.getItem("planets-" + pageNumber)) {
+    const planets = JSON.parse(localStorage.getItem("planets-" + pageNumber));
+    planets.forEach((planet) => {
+      const p = document.createElement("p");
+      p.innerText = planet.name;
+      element.appendChild(p);
+    });
+    return;
+  }
+
+  const response = await fetch(
+    "https://swapi.dev/api/planets?page=" + pageNumber
+  );
+
   const result = await response.json();
-
-  let html = "";
-
-  result.results.forEach((element) => {
-    html += `<div>${element.name}</div>`;
+  localStorage.setItem("planets-" + pageNumber, JSON.stringify(result.results));
+  result.results.forEach((planet) => {
+    const p = document.createElement("p");
+    p.innerText = planet.name;
+    element.appendChild(p);
   });
-
-  element.innerHTML = html;
 }
+
+export const fetchNextPage = async (button) => {
+  button.addEventListener("click", async (e) => {
+    e.preventDefault();
+    let pageNumber = sessionStorage.getItem("pageNumber") || 1;
+    pageNumber++;
+    console.log(pageNumber);
+    sessionStorage.setItem("pageNumber", pageNumber);
+    displayPlanets(document.getElementById("list"));
+  });
+};

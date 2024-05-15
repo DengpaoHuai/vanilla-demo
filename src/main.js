@@ -4,6 +4,7 @@ import viteLogo from "/vite.svg";
 import { displayPlanets, fetchNextPage } from "./displayPlanets.js";
 import { Store } from "./store/store.js";
 import router from "./router/router.js";
+import { movieSchema } from "./schemas/movie.schema.ts";
 
 router();
 
@@ -14,10 +15,34 @@ document.addEventListener("click", (e) => {
     router();
   }
 });
+/*
 document.getElementById("change-content").addEventListener("click", () => {
   document.getElementById("montext").innerText =
     "Le contenu du paragraphe a été modifié !";
+});*/
+
+document.getElementById("movie-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData.entries());
+  try {
+    const movie = await movieSchema.validate(data);
+  } catch (error) {
+    //
+  }
+
+  fetch("https://crudcrud.com/api/7dcd8ae40cad4534b61952906e39c3e0/movies", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(movie),
+  }).then(() => {
+    history.pushState(null, null, "/");
+    router();
+  });
 });
+
 /*
 document.getElementById("app").innerHTML = `
   <h1>Hello Vite!</h1>

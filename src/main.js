@@ -5,6 +5,7 @@ import { displayPlanets, fetchNextPage } from "./displayPlanets.js";
 import { Store } from "./store/store.js";
 import router from "./router/router.js";
 import { movieSchema } from "./schemas/movie.schema.ts";
+import movieStore from "./store/movies.store.js";
 
 router();
 
@@ -21,26 +22,38 @@ document.getElementById("change-content").addEventListener("click", () => {
     "Le contenu du paragraphe a été modifié !";
 });*/
 
-document.getElementById("movie-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const formData = new FormData(e.target);
-  const data = Object.fromEntries(formData.entries());
-  try {
-    const movie = await movieSchema.validate(data);
-  } catch (error) {
-    //
-  }
+try {
+  document
+    .getElementById("movie-form")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
 
-  fetch("https://crudcrud.com/api/7dcd8ae40cad4534b61952906e39c3e0/movies", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify(movie),
-  }).then(() => {
-    history.pushState(null, null, "/");
-    router();
-  });
+      const movie = await movieSchema.validate(data);
+
+      fetch(
+        "https://crudcrud.com/api/7dcd8ae40cad4534b61952906e39c3e0/movies",
+        {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(movie),
+        }
+      ).then((response) => {
+        response.json().then((result) => {
+          movieStore.setState({ movies: [result] });
+
+          history.pushState(null, null, "/");
+          router();
+        });
+      });
+    });
+} catch (error) {}
+
+movieStore.subscribe("movies", (moviesList) => {
+  console.log(moviesList);
 });
 
 /*
@@ -55,7 +68,7 @@ displayPlanets(document.getElementById("list"));
 
 fetchNextPage(document.getElementById("next"), 1);
 fetchNextPage(document.getElementById("previous"), -1);
-/*
+
 const store = new Store({ pageNumber: 1 });
 
 console.log(store);
@@ -94,3 +107,52 @@ document.addEventListener("click", (e) => {
     router();
   }
 });*/
+/*
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").then(
+      (registration) => {
+        console.log(
+          "ServiceWorker registration successful with scope: ",
+          registration.scope
+        );
+      },
+      (err) => {
+        console.log("ServiceWorker registration failed: ", err);
+      }
+    );
+  });
+}
+
+let deferredPrompt = null;
+
+window.addEventListener("beforeinstallprompt", (e) => {
+  // Empêcher l'affichage immédiat de la boîte de dialogue d'installation
+  e.preventDefault();
+  // Sauvegarder l'événement pour le déclencher plus tard
+  deferredPrompt = e;
+  // Afficher votre propre bouton d'installation
+  const installButton = document.getElementById("install-button");
+  if (installButton) {
+    installButton.style.display = "block";
+  }
+});
+
+const installButton = document.getElementById("install-button");
+
+if (installButton) {
+  installButton.addEventListener("click", async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const choiceResult = await deferredPrompt.userChoice;
+      if (choiceResult.outcome === "accepted") {
+        console.log("User accepted the A2HS prompt");
+      } else {
+        console.log("User dismissed the A2HS prompt");
+      }
+      deferredPrompt = null;
+      installButton.style.display = "none";
+    }
+  });
+}
+*/

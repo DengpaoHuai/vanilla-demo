@@ -17,7 +17,7 @@ const MovieForm = () => {
 
     const movie = await movieSchema.validate(data);
 
-    fetch("https://crudcrud.com/api/7dcd8ae40cad4534b61952906e39c3e0/movies", {
+    fetch("http://localhost:3000/movies/create", {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -39,9 +39,8 @@ const MovieForm = () => {
         <label for="title">Titre</label>
         <input type="text" name="title" id="title" required>
         <label for="release-date">Date de sortie</label>
-        <input type="date" name="release-date" id="release-date" required>
-        <label for="synopsis">Synopsis</label>
-        <textarea name="synopsis" id="synopsis" required></textarea>
+        <input type="date" name="date" id="release-date" required>
+        <input type="number" name="rating" id="rating" required>
         <button type="submit">Ajouter</button>
     `;
 

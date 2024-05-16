@@ -1,12 +1,9 @@
 import movieStore from "../store/movies.store";
 
 const deleteMovie = (id, movies) => {
-  fetch(
-    `https://crudcrud.com/api/7dcd8ae40cad4534b61952906e39c3e0/movies/${id}`,
-    {
-      method: "DELETE",
-    }
-  )
+  fetch(`http://localhost:3000/movies/${id}`, {
+    method: "DELETE",
+  })
     .then(() => {
       movieStore.setState({
         movies: movies.filter((movie) => movie._id !== id),
@@ -40,7 +37,7 @@ export default function Home() {
   const movies = movieStore.getState().movies;
 
   if (movies.length === 0) {
-    fetch("https://crudcrud.com/api/7dcd8ae40cad4534b61952906e39c3e0/movies")
+    fetch("http://localhost:3000/movies")
       .then((response) => response.json())
       .then((data) => {
         movieStore.setState({ movies: data });

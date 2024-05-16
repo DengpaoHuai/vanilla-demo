@@ -22,36 +22,6 @@ document.getElementById("change-content").addEventListener("click", () => {
     "Le contenu du paragraphe a été modifié !";
 });*/
 
-try {
-  document
-    .getElementById("movie-form")
-    .addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const data = Object.fromEntries(formData.entries());
-
-      const movie = await movieSchema.validate(data);
-
-      fetch(
-        "https://crudcrud.com/api/7dcd8ae40cad4534b61952906e39c3e0/movies",
-        {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(movie),
-        }
-      ).then((response) => {
-        response.json().then((result) => {
-          movieStore.setState({ movies: [result] });
-
-          history.pushState(null, null, "/");
-          router();
-        });
-      });
-    });
-} catch (error) {}
-
 movieStore.subscribe("movies", (moviesList) => {
   console.log(moviesList);
 });

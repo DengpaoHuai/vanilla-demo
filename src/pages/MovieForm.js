@@ -17,7 +17,7 @@ const MovieForm = () => {
 
     const movie = await movieSchema.validate(data);
 
-    fetch("https://crudcrud.com/api/7dcd8ae40cad4534b61952906e39c3e0/movies", {
+    fetch("https://crudcrud.com/api/3dd789fdd8bc4562905efaf08df6a25d/movies", {
       method: "POST",
       headers: {
         "content-type": "application/json",

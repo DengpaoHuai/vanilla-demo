@@ -11,6 +11,9 @@ const Header = () => {
                     <li>
                         <a href="/demo" data-link>Demo</a>
                     </li>
+                    <li>
+                        <a href="/create_movie" data-link>Ajouter un film</a>
+                    </li>
                 </ul>
             </nav>
         </header>

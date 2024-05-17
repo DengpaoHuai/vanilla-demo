@@ -14,6 +14,9 @@ const Header = () => {
                     <li>
                         <a href="/create_movie" data-link>Movies</a>
                     </li>
+                    <li>
+                        <a href="/camera" data-link>Camera</a>
+                    </li>
                 </ul>
             </nav>
         </header>

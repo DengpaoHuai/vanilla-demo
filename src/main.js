@@ -77,7 +77,7 @@ document.addEventListener("click", (e) => {
     router();
   }
 });*/
-
+/*
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("/sw.js").then(
@@ -93,6 +93,10 @@ if ("serviceWorker" in navigator) {
     );
   });
 }
+*/
+
+document.getElementById("app").innerHTML = navigator.vibrate(200);
+
 /*
 let deferredPrompt = null;
 

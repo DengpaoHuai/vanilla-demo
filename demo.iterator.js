@@ -29,3 +29,10 @@ async function* asyncFetchpage() {
     pageNumber++;
   }
 }
+
+const asyncGen = asyncFetchpage();
+(async () => {
+  for await (const planets of asyncGen) {
+    console.log(planets);
+  }
+})();
